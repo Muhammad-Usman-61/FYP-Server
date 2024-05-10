@@ -32,19 +32,24 @@ def home():
     return "This is the server for FYP Project, Send request on /data endpoint to get result"
 
 @app.route('/data', methods=['POST', 'GET'])
+@app.route('/data', methods=['POST', 'GET'])
 def data():
     if request.method == 'POST':
-        file = request.files['file']
-        img_bytes = file.read()
-        img = io.BytesIO(img_bytes)
-        result = pre.model_predict(img)
-        predicted_class_index = np.argmax(result)
-        predicted_class = class_labels[predicted_class_index]
-        accuracy = np.max(result)
-        accuracy = round(float(accuracy * 100), 2)
-        return {'predicted_class': predicted_class, 'accuracy': accuracy}
+        try:
+            file = request.files['file']
+            img_bytes = file.read()
+            img = io.BytesIO(img_bytes)
+            result = pre.model_predict(img)
+            predicted_class_index = np.argmax(result)
+            predicted_class = class_labels[predicted_class_index]
+            accuracy = np.max(result)
+            accuracy = round(float(accuracy * 100), 2)
+            return {'predicted_class': predicted_class, 'accuracy': accuracy}
+        except Exception as e:
+            return "{'error': str(e)}, 500"  # Return error message and 500 status code for internal server error
     
     return "This is the server for FYP Project, Send request on /data endpoint to get result"
+
 
 if __name__ == '__main__':
     app.run(debug=True)
